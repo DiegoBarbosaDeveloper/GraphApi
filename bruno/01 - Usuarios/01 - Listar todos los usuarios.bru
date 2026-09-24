@@ -1,0 +1,25 @@
+meta {
+  name: 01 - Listar todos los usuarios
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query ListarUsuarios {
+    usuarios {
+      id
+      nombre
+      email
+      telefono
+      activo
+      creadoEn
+      actualizadoEn
+    }
+  }
+}

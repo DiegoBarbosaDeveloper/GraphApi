@@ -1,0 +1,40 @@
+meta {
+  name: 04 - Actualizar usuario
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation ActualizarUsuario($id: ID!, $input: ActualizarUsuarioInput!) {
+    actualizarUsuario(id: $id, input: $input) {
+      id
+      nombre
+      email
+      telefono
+      activo
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "input": {
+      "nombre": "María Pérez Actualizada",
+      "telefono": "+34 611 111 111",
+      "activo": false
+    }
+  }
+}
+
+docs {
+  Solo modifica los campos enviados. telefono: null elimina el teléfono.
+  nombre, email y activo no pueden ser null.
+}

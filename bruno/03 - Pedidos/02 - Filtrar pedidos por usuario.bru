@@ -1,0 +1,37 @@
+meta {
+  name: 02 - Filtrar pedidos por usuario
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query PedidosDeUsuario($usuarioId: ID!) {
+    pedidos(usuarioId: $usuarioId) {
+      id
+      producto
+      cantidad
+      subtotal
+      orden {
+        id
+        estado
+        total
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "usuarioId": "00000000-0000-0000-0000-000000000001"
+  }
+}
+
+docs {
+  Devuelve los pedidos del usuario. Sustituye el id por un UUID real.
+}

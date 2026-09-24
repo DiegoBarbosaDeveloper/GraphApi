@@ -1,0 +1,43 @@
+meta {
+  name: 03 - Crear primer pedido
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearPedido($input: CrearPedidoInput!) {
+    crearPedido(input: $input) {
+      id
+      producto
+      cantidad
+      precioUnitario
+      subtotal
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "producto": "Comida para gatos",
+      "descripcion": "Paquete premium",
+      "cantidad": 2,
+      "precioUnitario": 12.5,
+      "usuarioId": "{{flowUsuarioId}}",
+      "ordenId": "{{flowOrdenId}}"
+    }
+  }
+}
+
+script:post-response {
+  const data = res.body.data;
+  if (data && data.crearPedido && data.crearPedido.id) {
+    bru.setVar("flowPedidoId", data.crearPedido.id);
+  }
+}

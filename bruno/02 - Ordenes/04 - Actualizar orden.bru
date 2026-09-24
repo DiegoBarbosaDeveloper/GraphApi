@@ -1,0 +1,35 @@
+meta {
+  name: 04 - Actualizar orden
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation ActualizarOrden($id: ID!, $input: ActualizarOrdenInput!) {
+    actualizarOrden(id: $id, input: $input) {
+      id
+      estado
+      total
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "input": {
+      "estado": "PAGADA"
+    }
+  }
+}
+
+docs {
+  Solo se puede modificar el estado. El propietario es inmutable.
+}

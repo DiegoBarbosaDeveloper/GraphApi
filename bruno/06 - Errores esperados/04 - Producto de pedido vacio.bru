@@ -1,0 +1,36 @@
+meta {
+  name: 04 - Producto de pedido vacio
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearPedido($input: CrearPedidoInput!) {
+    crearPedido(input: $input) {
+      id
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "producto": "   ",
+      "cantidad": 1,
+      "precioUnitario": 10,
+      "usuarioId": "00000000-0000-0000-0000-000000000001",
+      "ordenId": "00000000-0000-0000-0000-000000000002"
+    }
+  }
+}
+
+docs {
+  Esperado: data: null y errors con "Bad Request".
+  Sustituye los ids por entidades reales.
+}

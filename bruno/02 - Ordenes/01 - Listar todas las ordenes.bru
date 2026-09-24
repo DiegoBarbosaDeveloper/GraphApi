@@ -1,0 +1,37 @@
+meta {
+  name: 01 - Listar todas las ordenes
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query ListarOrdenes {
+    ordenes {
+      id
+      estado
+      usuarioId
+      total
+      usuario {
+        id
+        nombre
+        email
+      }
+      pedidos {
+        id
+        producto
+      }
+      pagos {
+        id
+        monto
+      }
+      creadoEn
+      actualizadoEn
+    }
+  }
+}

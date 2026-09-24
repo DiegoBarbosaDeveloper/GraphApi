@@ -1,0 +1,55 @@
+meta {
+  name: 02 - Obtener orden por id
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query ObtenerOrden($id: ID!) {
+    orden(id: $id) {
+      id
+      estado
+      usuarioId
+      total
+      usuario {
+        id
+        nombre
+        email
+      }
+      pedidos {
+        id
+        producto
+        descripcion
+        cantidad
+        precioUnitario
+        subtotal
+      }
+      pagos {
+        id
+        monto
+        metodo
+        estado
+        referencia
+      }
+      creadoEn
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "00000000-0000-0000-0000-000000000002"
+  }
+}
+
+docs {
+  Sustituye el id por el UUID de una orden existente.
+  total es la suma de los subtotales de sus pedidos.
+}

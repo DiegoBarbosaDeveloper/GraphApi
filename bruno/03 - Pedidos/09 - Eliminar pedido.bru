@@ -1,0 +1,27 @@
+meta {
+  name: 09 - Eliminar pedido
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation EliminarPedido($id: ID!) {
+    eliminarPedido(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "00000000-0000-0000-0000-000000000003"
+  }
+}
+
+docs {
+  Devuelve true y recalcula el total de la orden.
+}

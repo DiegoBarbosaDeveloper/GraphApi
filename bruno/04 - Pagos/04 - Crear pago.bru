@@ -1,0 +1,43 @@
+meta {
+  name: 04 - Crear pago
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearPago($input: CrearPagoInput!) {
+    crearPago(input: $input) {
+      id
+      monto
+      metodo
+      estado
+      referencia
+      ordenId
+      creadoEn
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "monto": 30,
+      "metodo": "TARJETA",
+      "estado": "APROBADO",
+      "referencia": "REF-001",
+      "ordenId": "00000000-0000-0000-0000-000000000002"
+    }
+  }
+}
+
+docs {
+  metodo es obligatorio. estado es opcional (por defecto PENDIENTE).
+  El monto no está limitado al total de la orden.
+}

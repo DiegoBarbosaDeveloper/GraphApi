@@ -1,0 +1,43 @@
+meta {
+  name: 03 - Crear orden
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearOrden($input: CrearOrdenInput!) {
+    crearOrden(input: $input) {
+      id
+      estado
+      usuarioId
+      total
+      usuario {
+        id
+        nombre
+        email
+      }
+      creadoEn
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "usuarioId": "00000000-0000-0000-0000-000000000001",
+      "estado": "PENDIENTE"
+    }
+  }
+}
+
+docs {
+  estado es opcional (PENDIENTE, PAGADA, COMPLETADA o CANCELADA).
+  Si se omite, se crea como PENDIENTE. El propietario queda fijado.
+}

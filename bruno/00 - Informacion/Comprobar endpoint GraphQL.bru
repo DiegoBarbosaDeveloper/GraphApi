@@ -1,0 +1,22 @@
+meta {
+  name: Comprobar endpoint GraphQL
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query Comprobar {
+    __typename
+  }
+}
+
+docs {
+  Verifica que el endpoint POST /graphql responde.
+  Esperado: data.__typename = "Query".
+}

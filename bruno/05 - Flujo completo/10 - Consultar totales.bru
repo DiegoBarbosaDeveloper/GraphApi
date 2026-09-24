@@ -1,0 +1,47 @@
+meta {
+  name: 10 - Consultar totales
+  type: graphql
+  seq: 10
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query Totales($ordenId: ID!, $segundaOrdenId: ID!) {
+    orden(id: $ordenId) {
+      id
+      estado
+      total
+      pedidos {
+        id
+        producto
+        subtotal
+      }
+    }
+    segundaOrden: orden(id: $segundaOrdenId) {
+      id
+      estado
+      total
+      pedidos {
+        id
+        producto
+        subtotal
+      }
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "ordenId": "{{flowOrdenId}}",
+    "segundaOrdenId": "{{flowOrden2Id}}"
+  }
+}
+
+docs {
+  Verifica los totales tras los movimientos y actualizaciones anteriores.
+}

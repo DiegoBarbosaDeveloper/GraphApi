@@ -1,0 +1,56 @@
+meta {
+  name: 07 - Actualizar entidades
+  type: graphql
+  seq: 7
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation ActualizarEntidades(
+    $usuarioId: ID!
+    $ordenId: ID!
+    $pedidoId: ID!
+    $pagoId: ID!
+  ) {
+    actualizarUsuario(
+      id: $usuarioId
+      input: { nombre: "María Actualizada", telefono: null }
+    ) {
+      id
+      nombre
+      telefono
+    }
+    actualizarOrden(id: $ordenId, input: { estado: PAGADA }) {
+      id
+      estado
+      total
+    }
+    actualizarPedido(id: $pedidoId, input: { cantidad: 4 }) {
+      id
+      cantidad
+      subtotal
+    }
+    actualizarPago(id: $pagoId, input: { estado: REEMBOLSADO }) {
+      id
+      estado
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "usuarioId": "{{flowUsuarioId}}",
+    "ordenId": "{{flowOrdenId}}",
+    "pedidoId": "{{flowPedidoId}}",
+    "pagoId": "{{flowPagoId}}"
+  }
+}
+
+docs {
+  Al cambiar la cantidad del pedido a 4, su subtotal pasa a 50 y el total de la orden a 55.
+}
