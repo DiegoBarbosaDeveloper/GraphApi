@@ -1,155 +1,149 @@
-# MrCatFood API
+# MrCatFood - GraphApi
 
-API GraphQL **code-first** para gestionar usuarios, órdenes, pedidos y pagos. Está desarrollada con NestJS, TypeScript, Apollo Server y un almacenamiento temporal en memoria.
+API Gateway GraphQL para el sistema de microservicios MrCatFood, construido con WunderGraph Cosmo Router.
 
-## Documentación
+## Arquitectura
 
-- [Referencia completa de la API](docs/API.md): tipos, consultas, mutaciones, validaciones y errores.
-- [Ejemplos de uso](docs/EXAMPLES.md): flujo completo de creación, consulta, actualización y eliminación.
-- [Arquitectura](docs/ARCHITECTURE.md): módulos, servicios, relaciones, almacenamiento y flujo de una petición.
-- [Esquema GraphQL SDL](docs/schema.gql): contrato generado desde el código.
+MrCatFood utiliza una arquitectura de microservicios con un API Gateway GraphQL centralizado:
 
-El esquema SDL puede regenerarse después de cambiar modelos o resolvers:
+```
+                    ┌─────────────────┐
+                    │  Cosmo Router   │
+                    │   (GraphQL)     │
+                    │   Puerto 3000   │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+    ┌─────────▼──────┐ ┌────▼─────┐ ┌──────▼───────┐
+    │ usuarios-svc   │ │ordenes-svc│ │ pedidos-svc  │
+    │ (Spring Boot)  │ │(Spring)   │ │  (NestJS)    │
+    │ Puerto 3001    │ │Puerto 3002│ │ Puerto 3003  │
+    └────────────────┘ └───────────┘ └──────────────┘
+                             │
+                    ┌────────▼────────┐
+                    │  pagos-service  │
+                    │    (Flask)      │
+                    │  Puerto 3004    │
+                    └─────────────────┘
+                             │
+                    ┌────────▼────────┐
+                    │     Consul      │
+                    │ Service Discovery│
+                    │  Puerto 8500    │
+                    └─────────────────┘
+```
+
+## Servicios y Puertos
+
+| Servicio | Tecnología | Puerto | Descripción |
+|----------|-----------|--------|-------------|
+| cosmo-router | WunderGraph Cosmo | 3000 | API Gateway GraphQL |
+| usuarios-service | Java Spring Boot | 3001 | Gestión de usuarios |
+| ordenes-service | Java Spring Boot | 3002 | Gestión de órdenes |
+| pedidos-service | NestJS | 3003 | Gestión de pedidos |
+| pagos-service | Python Flask | 3004 | Procesamiento de pagos |
+| consul | HashiCorp Consul | 8500 | Service Discovery |
+
+## Requisitos
+
+- Docker >= 20.10
+- Docker Compose >= 2.0
+
+## Inicio rápido
+
+1. Clona el repositorio:
+   ```bash
+   git clone <repo-url>
+   cd GraphApi
+   ```
+
+2. Crea el archivo de variables de entorno:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Levanta todos los servicios:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. Verifica que los servicios estén corriendo:
+   ```bash
+   docker-compose ps
+   ```
+
+5. Accede a:
+   - **GraphQL Playground**: http://localhost:3000
+   - **Consul UI**: http://localhost:8500
+
+## Comandos útiles
 
 ```bash
-pnpm schema:generate
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Ver logs de un servicio específico
+docker-compose logs -f usuarios-service
+
+# Detener todos los servicios
+docker-compose down
+
+# Detener y eliminar volúmenes (borra datos)
+docker-compose down -v
+
+# Reconstruir imágenes
+docker-compose build --no-cache
 ```
 
-## Alcance actual
-
-Decisiones deliberadas del MVP:
-
-- Sin autenticación ni autorización.
-- Con almacenamiento en memoria.
-- Sin paginación.
-- Sin reglas automáticas de transición de estados.
-- Los pagos no están limitados automáticamente al total de la orden.
-- Los datos se reinician cuando se detiene el servidor.
-
-En este MVP, **Pedido** representa una línea de producto incluida dentro de una orden.
-
-## Modelo de datos
-
-- Un **Usuario** puede tener muchas órdenes y muchos pedidos.
-- Cada **Orden** tiene un único usuario propietario.
-- Una **Orden** contiene muchos pedidos y pagos.
-- Cada pedido pertenece al mismo usuario que es propietario de su orden.
-- El total de una orden se calcula con los subtotales de sus pedidos.
-
-```text
-Usuario 1 ─── N Orden 1 ─── N Pedido
-Usuario 1 ─── N Pedido
-Orden  1 ─── N Pago
-```
-
-## Requisitos y ejecución
-
-```bash
-pnpm install
-pnpm start:dev
-```
-
-Endpoints:
-
-- GraphQL y GraphiQL: `http://localhost:3000/graphql`
-- Endpoint auxiliar de NestJS: `GET http://localhost:3000/`, que devuelve `Hello World!`.
-
-Toda la API de usuarios, órdenes, pedidos y pagos se expone exclusivamente mediante `/graphql`.
-
-GraphiQL se habilita fuera del modo de producción. Para cambiar el puerto:
-
-```bash
-PORT=4000 pnpm start:dev
-```
-
-Para ejecutar el JavaScript compilado en modo de producción:
-
-```bash
-pnpm build
-pnpm start:prod
-```
-
-`start:prod` deshabilita GraphiQL, introspection y trazas de pila en las respuestas de error.
-
-## Resumen de operaciones
-
-| Entidad  | Consultas                                   | Mutaciones                                             |
-| -------- | ------------------------------------------- | ------------------------------------------------------ |
-| Usuarios | `usuarios`, `usuario(id)`                   | `crearUsuario`, `actualizarUsuario`, `eliminarUsuario` |
-| Pedidos  | `pedidos(usuarioId, ordenId)`, `pedido(id)` | `crearPedido`, `actualizarPedido`, `eliminarPedido`    |
-| Órdenes  | `ordenes`, `orden(id)`                      | `crearOrden`, `actualizarOrden`, `eliminarOrden`       |
-| Pagos    | `pagos(ordenId)`, `pago(id)`                | `crearPago`, `actualizarPago`, `eliminarPago`          |
-
-Los filtros de `pedidos` y `pagos` son opcionales. Omitirlos o enviar `null` equivale a no filtrar.
-
-## Ejemplo mínimo
+## Ejemplo de query GraphQL
 
 ```graphql
-mutation CrearFlujo {
-  crearUsuario(input: { nombre: "María", email: "maria@example.com" }) {
+query GetUsuarioConPedidos($id: ID!) {
+  usuario(id: $id) {
     id
+    nombre
+    email
+    pedidos {
+      id
+      estado
+      total
+      fechaCreacion
+    }
   }
 }
 ```
 
-Después se utiliza el id devuelto para crear una orden:
-
-```graphql
-mutation CrearOrden {
-  crearOrden(input: { usuarioId: "UUID_DEL_USUARIO" }) {
-    id
-    estado
-    total
-  }
+Variables:
+```json
+{
+  "id": "usr_001"
 }
 ```
 
-Los flujos completos están en [docs/EXAMPLES.md](docs/EXAMPLES.md).
+## Estructura del proyecto
 
-## Reglas principales
-
-- Todos los identificadores son UUID v4.
-- El email es único y se almacena en minúsculas.
-- Los textos obligatorios no pueden estar vacíos ni contener solo espacios.
-- Una orden requiere un propietario existente.
-- El propietario de una orden es inmutable después de crearla.
-- Un pedido debe pertenecer al propietario de su orden.
-- Las relaciones se validan antes de aplicar una actualización.
-- El subtotal es `cantidad × precioUnitario`.
-- El total se redondea a dos decimales.
-- El total se recalcula al crear, actualizar, mover o eliminar pedidos.
-- No se puede eliminar un usuario con pedidos u órdenes.
-- No se puede eliminar una orden con pedidos o pagos.
-
-La referencia completa está en [docs/API.md](docs/API.md).
-
-## Estructura principal
-
-```text
-src/
-├── graphql/          # Configuración y resolvers
-├── usuarios/         # Modelo, input, servicio y módulo
-├── ordenes/          # Modelo, input, servicio y módulo
-├── pedidos/          # Modelo, input, servicio y módulo
-├── pagos/            # Modelo, input, servicio y módulo
-├── store/            # Almacenamiento en memoria
-├── app.module.ts
-├── app.setup.ts
-└── main.ts
-test/                 # Pruebas end-to-end de GraphQL
-scripts/              # Generador del esquema SDL
-docs/                 # Documentación y esquema generado
+```
+GraphApi/
+├── consul/
+│   └── config.json          # Configuración de Consul
+├── cosmo/
+│   └── config.yaml          # Configuración del router
+├── services/
+│   ├── usuarios/            # Spring Boot
+│   ├── ordenes/             # Spring Boot
+│   ├── pedidos/             # NestJS
+│   └── pagos/               # Flask
+├── docker-compose.yml
+├── .env.example
+└── README.md
 ```
 
-## Comandos de calidad
+## Desarrollo
+
+Cada servicio tiene su propio directorio bajo `services/` con su Dockerfile y código fuente correspondiente. Para desarrollar un servicio individual:
 
 ```bash
-pnpm format           # Formato con Prettier
-pnpm typecheck        # Typecheck de src, test y configuración
-pnpm lint             # Análisis estático con Oxlint
-pnpm test             # Pruebas unitarias
-pnpm test:e2e         # Pruebas end-to-end de GraphQL
-pnpm build            # Compilación
-pnpm schema:generate  # Regenera docs/schema.gql
-pnpm peers check      # Comprueba peer dependencies
+cd services/<servicio>
+# Sigue las instrucciones del README de cada servicio
 ```

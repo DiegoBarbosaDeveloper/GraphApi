@@ -1,0 +1,40 @@
+server:
+  port: 3002
+
+spring:
+  application:
+    name: ordenes-service
+  datasource:
+    url: jdbc:sqlite:${DB_PATH:/data}/ordenes.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      locations: classpath:graphql/
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: 8500
+      discovery:
+        service-name: ordenes-service
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+services:
+  pedidos:
+    url: http://pedidos-service:3003/graphql
