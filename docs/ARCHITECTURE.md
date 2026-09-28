@@ -2,7 +2,7 @@
 
 ## Resumen
 
-MrCatFood es una API NestJS organizada en cuatro módulos de dominio y una capa GraphQL:
+Grahapi es una API NestJS organizada en cuatro módulos de dominio y una capa GraphQL:
 
 - `UsuariosModule`
 - `OrdenesModule`

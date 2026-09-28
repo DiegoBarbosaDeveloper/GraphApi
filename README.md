@@ -1,10 +1,10 @@
-# MrCatFood - GraphApi
+# Grahapi - GraphApi
 
-API Gateway GraphQL para el sistema de microservicios MrCatFood, construido con WunderGraph Cosmo Router.
+API Gateway GraphQL para el sistema de microservicios Grahapi, construido con WunderGraph Cosmo Router.
 
 ## Arquitectura
 
-MrCatFood utiliza una arquitectura de microservicios con un API Gateway GraphQL centralizado:
+Grahapi utiliza una arquitectura de microservicios con un API Gateway GraphQL centralizado:
 
 ```
                     ┌─────────────────┐

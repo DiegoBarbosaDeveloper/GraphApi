@@ -15,7 +15,7 @@
     <artifactId>ordenes-service</artifactId>
     <version>1.0.0</version>
     <name>ordenes-service</name>
-    <description>Microservicio de Ordenes para MrCatFood</description>
+    <description>Microservicio de Ordenes para Grahapi</description>
 
     <properties>
         <java.version>17</java.version>

@@ -1,6 +1,6 @@
 # WunderGraph Cosmo Router
 
-API Gateway GraphQL para MrCatFood.
+API Gateway GraphQL para Grahapi.
 
 ## Configuración
 

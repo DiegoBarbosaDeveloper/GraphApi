@@ -3,14 +3,14 @@ version: "3.9"
 services:
   consul:
     image: hashicorp/consul:1.17
-    container_name: mrcatfood-consul
+    container_name: grahapi-consul
     ports:
       - "8500:8500"
     volumes:
       - ./consul/config.json:/consul/config/config.json:ro
     command: "agent -server -ui -bootstrap-expect=1 -client=0.0.0.0 -config-file=/consul/config/config.json"
     networks:
-      - mrcatfood-network
+      - grahapi-network
     healthcheck:
       test: ["CMD", "consul", "info"]
       interval: 10s
@@ -21,7 +21,7 @@ services:
     build:
       context: ./services/usuarios
       dockerfile: Dockerfile
-    container_name: mrcatfood-usuarios
+    container_name: grahapi-usuarios
     ports:
       - "3001:3001"
     environment:
@@ -31,7 +31,7 @@ services:
     volumes:
       - usuarios-data:/data
     networks:
-      - mrcatfood-network
+      - grahapi-network
     depends_on:
       consul:
         condition: service_healthy
@@ -45,7 +45,7 @@ services:
     build:
       context: ./services/ordenes
       dockerfile: Dockerfile
-    container_name: mrcatfood-ordenes
+    container_name: grahapi-ordenes
     ports:
       - "3002:3002"
     environment:
@@ -55,7 +55,7 @@ services:
     volumes:
       - ordenes-data:/data
     networks:
-      - mrcatfood-network
+      - grahapi-network
     depends_on:
       consul:
         condition: service_healthy
@@ -69,7 +69,7 @@ services:
     build:
       context: ./services/pedidos
       dockerfile: Dockerfile
-    container_name: mrcatfood-pedidos
+    container_name: grahapi-pedidos
     ports:
       - "3003:3003"
     environment:
@@ -79,7 +79,7 @@ services:
     volumes:
       - pedidos-data:/data
     networks:
-      - mrcatfood-network
+      - grahapi-network
     depends_on:
       consul:
         condition: service_healthy
@@ -93,7 +93,7 @@ services:
     build:
       context: ./services/pagos
       dockerfile: Dockerfile
-    container_name: mrcatfood-pagos
+    container_name: grahapi-pagos
     ports:
       - "3004:3004"
     environment:
@@ -103,7 +103,7 @@ services:
     volumes:
       - pagos-data:/data
     networks:
-      - mrcatfood-network
+      - grahapi-network
     depends_on:
       consul:
         condition: service_healthy
@@ -115,7 +115,7 @@ services:
 
   cosmo-router:
     image: ghcr.io/wundergraph/cosmo/router:latest
-    container_name: mrcatfood-cosmo-router
+    container_name: grahapi-cosmo-router
     ports:
       - "3000:3000"
     environment:
@@ -124,7 +124,7 @@ services:
     volumes:
       - ./cosmo/config.yaml:/dist/config.yaml:ro
     networks:
-      - mrcatfood-network
+      - grahapi-network
     depends_on:
       usuarios-service:
         condition: service_healthy
@@ -141,7 +141,7 @@ services:
       retries: 5
 
 networks:
-  mrcatfood-network:
+  grahapi-network:
     driver: bridge
 
 volumes:
