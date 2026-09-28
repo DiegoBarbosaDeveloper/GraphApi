@@ -1,0 +1,32 @@
+meta {
+  name: 02 - Email invalido
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearUsuario($input: CrearUsuarioInput!) {
+    crearUsuario(input: $input) {
+      id
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "nombre": "Usuario Con Email Invalido",
+      "email": "no-es-un-email"
+    }
+  }
+}
+
+docs {
+  Esperado: data: null y errors con mensaje que contiene "Bad Request".
+}

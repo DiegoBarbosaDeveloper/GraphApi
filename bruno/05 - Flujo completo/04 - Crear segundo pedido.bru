@@ -1,0 +1,46 @@
+meta {
+  name: 04 - Crear segundo pedido
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearPedido($input: CrearPedidoInput!) {
+    crearPedido(input: $input) {
+      id
+      producto
+      cantidad
+      precioUnitario
+      subtotal
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "producto": "Juguete",
+      "cantidad": 1,
+      "precioUnitario": 5,
+      "usuarioId": "{{flowUsuarioId}}",
+      "ordenId": "{{flowOrdenId}}"
+    }
+  }
+}
+
+script:post-response {
+  const data = res.body.data;
+  if (data && data.crearPedido && data.crearPedido.id) {
+    bru.setVar("flowPedido2Id", data.crearPedido.id);
+  }
+}
+
+docs {
+  El total de la orden pasa a ser 30 (25 + 5).
+}

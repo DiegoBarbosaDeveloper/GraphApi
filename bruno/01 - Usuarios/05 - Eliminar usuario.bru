@@ -1,0 +1,28 @@
+meta {
+  name: 05 - Eliminar usuario
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation EliminarUsuario($id: ID!) {
+    eliminarUsuario(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "505efe80-5701-45f0-8c5e-db973be2614e"
+  }
+}
+
+docs {
+  Devuelve true si el usuario no tiene pedidos ni órdenes.
+  Si tiene dependencias, responde con un error de conflicto.
+}

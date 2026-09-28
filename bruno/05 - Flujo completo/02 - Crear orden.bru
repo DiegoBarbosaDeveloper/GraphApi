@@ -1,0 +1,37 @@
+meta {
+  name: 02 - Crear orden
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearOrden($input: CrearOrdenInput!) {
+    crearOrden(input: $input) {
+      id
+      estado
+      usuarioId
+      total
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "usuarioId": "{{flowUsuarioId}}"
+    }
+  }
+}
+
+script:post-response {
+  const data = res.body.data;
+  if (data && data.crearOrden && data.crearOrden.id) {
+    bru.setVar("flowOrdenId", data.crearOrden.id);
+  }
+}

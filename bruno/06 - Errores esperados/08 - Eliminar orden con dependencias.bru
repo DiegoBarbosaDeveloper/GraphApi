@@ -1,0 +1,28 @@
+meta {
+  name: 08 - Eliminar orden con dependencias
+  type: graphql
+  seq: 8
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation EliminarOrdenInvalida($id: ID!) {
+    eliminarOrden(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "00000000-0000-4000-8000-000000000002"
+  }
+}
+
+docs {
+  Usa una orden que tenga pedidos o pagos.
+  Esperado: errors con "pedidos asociados" o "pagos asociados" y data: null.
+}

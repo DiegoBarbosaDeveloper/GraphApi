@@ -1,0 +1,33 @@
+meta {
+  name: 09 - Mover pedido a la segunda orden
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation MoverPedido($id: ID!, $ordenId: ID!) {
+    actualizarPedido(id: $id, input: { ordenId: $ordenId }) {
+      id
+      usuarioId
+      ordenId
+      subtotal
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "{{flowPedido2Id}}",
+    "ordenId": "{{flowOrden2Id}}"
+  }
+}
+
+docs {
+  El pedido se mueve de la primera a la segunda orden; se recalculan los totales.
+}

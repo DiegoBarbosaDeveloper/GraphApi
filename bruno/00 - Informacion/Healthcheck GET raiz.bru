@@ -1,0 +1,16 @@
+meta {
+  name: Healthcheck GET raiz
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/
+  body: none
+  auth: none
+}
+
+docs {
+  Endpoint auxiliar de NestJS. Fuera del dominio de la API.
+  Esperado: status 200 con el texto "Hello World!".
+}

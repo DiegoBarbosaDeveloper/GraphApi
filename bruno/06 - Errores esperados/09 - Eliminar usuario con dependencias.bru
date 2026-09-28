@@ -1,0 +1,28 @@
+meta {
+  name: 09 - Eliminar usuario con dependencias
+  type: graphql
+  seq: 9
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation EliminarUsuarioInvalido($id: ID!) {
+    eliminarUsuario(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "00000000-0000-4000-8000-000000000001"
+  }
+}
+
+docs {
+  Usa un usuario que tenga órdenes o pedidos.
+  Esperado: errors de conflicto y data: null.
+}

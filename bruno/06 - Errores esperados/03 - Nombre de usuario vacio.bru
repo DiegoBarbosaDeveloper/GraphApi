@@ -1,0 +1,33 @@
+meta {
+  name: 03 - Nombre de usuario vacio
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearUsuario($input: CrearUsuarioInput!) {
+    crearUsuario(input: $input) {
+      id
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "nombre": "   ",
+      "email": "vacio@example.com"
+    }
+  }
+}
+
+docs {
+  Los campos obligatorios no pueden quedar vacíos.
+  Esperado: data: null y errors con "Bad Request".
+}

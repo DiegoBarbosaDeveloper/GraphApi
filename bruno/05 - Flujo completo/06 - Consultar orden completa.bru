@@ -1,0 +1,67 @@
+meta {
+  name: 06 - Consultar orden completa
+  type: graphql
+  seq: 6
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query OrdenCompleta($ordenId: ID!, $usuarioId: ID!) {
+    orden(id: $ordenId) {
+      id
+      estado
+      total
+      usuario {
+        id
+        nombre
+        email
+      }
+      pedidos {
+        id
+        producto
+        cantidad
+        subtotal
+      }
+      pagos {
+        id
+        monto
+        metodo
+        estado
+      }
+    }
+    usuario(id: $usuarioId) {
+      id
+      pedidos {
+        id
+      }
+      ordenes {
+        id
+      }
+    }
+    pedidos(usuarioId: $usuarioId, ordenId: $ordenId) {
+      id
+      producto
+      subtotal
+    }
+    pagos(ordenId: $ordenId) {
+      id
+      monto
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "ordenId": "{{flowOrdenId}}",
+    "usuarioId": "{{flowUsuarioId}}"
+  }
+}
+
+docs {
+  Ejecuta los pasos que se deseen en orden; los id se toman de los pasos previos.
+}

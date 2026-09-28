@@ -1,0 +1,40 @@
+meta {
+  name: 08 - Crear segunda orden
+  type: graphql
+  seq: 8
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearSegundaOrden($input: CrearOrdenInput!) {
+    crearOrden(input: $input) {
+      id
+      estado
+      total
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "usuarioId": "{{flowUsuarioId}}"
+    }
+  }
+}
+
+script:post-response {
+  const data = res.body.data;
+  if (data && data.crearSegundaOrden && data.crearSegundaOrden.id) {
+    bru.setVar("flowOrden2Id", data.crearSegundaOrden.id);
+  }
+}
+
+docs {
+  Sirve para probar el movimiento de un pedido a otra orden del mismo propietario.
+}

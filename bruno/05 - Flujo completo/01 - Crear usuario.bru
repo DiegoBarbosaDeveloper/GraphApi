@@ -1,0 +1,44 @@
+meta {
+  name: 01 - Crear usuario
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearUsuario($input: CrearUsuarioInput!) {
+    crearUsuario(input: $input) {
+      id
+      nombre
+      email
+      telefono
+      activo
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "nombre": "María Pérez",
+      "email": "maria@example.com",
+      "telefono": "+34 600 000 000"
+    }
+  }
+}
+
+script:post-response {
+  const data = res.body.data;
+  if (data && data.crearUsuario && data.crearUsuario.id) {
+    bru.setVar("flowUsuarioId", data.crearUsuario.id);
+  }
+}
+
+docs {
+  Ejecuta los pasos en orden; cada uno captura los id para los siguientes.
+}

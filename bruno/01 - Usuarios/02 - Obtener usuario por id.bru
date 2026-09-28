@@ -1,0 +1,44 @@
+meta {
+  name: 02 - Obtener usuario por id
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  query ObtenerUsuario($id: ID!) {
+    usuario(id: $id) {
+      id
+      nombre
+      email
+      telefono
+      activo
+      ordenes {
+        id
+        estado
+        total
+      }
+      pedidos {
+        id
+        producto
+      }
+      creadoEn
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "505efe80-5701-45f0-8c5e-db973be2614e"
+  }
+}
+
+docs {
+  Sustituye el id por el UUID de un usuario existente.
+}

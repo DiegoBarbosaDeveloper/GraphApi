@@ -1,0 +1,40 @@
+meta {
+  name: 03 - Crear usuario
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation CrearUsuario($input: CrearUsuarioInput!) {
+    crearUsuario(input: $input) {
+      id
+      nombre
+      email
+      telefono
+      activo
+      creadoEn
+      actualizadoEn
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "nombre": "María Pérez",
+      "email": "maria@example.com",
+      "telefono": "+34 600 000 000"
+    }
+  }
+}
+
+docs {
+  El email se almacena en minúsculas y debe ser único.
+  telefono es opcional. Guarda el id devuelto para las siguientes operaciones.
+}

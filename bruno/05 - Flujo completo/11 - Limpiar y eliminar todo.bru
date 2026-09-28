@@ -1,0 +1,45 @@
+meta {
+  name: 11 - Limpiar y eliminar todo
+  type: graphql
+  seq: 11
+}
+
+post {
+  url: http://localhost:3000/graphql
+  body: graphql
+  auth: none
+}
+
+body:graphql {
+  mutation LimpiarFlujo(
+    $usuarioId: ID!
+    $ordenId: ID!
+    $segundaOrdenId: ID!
+    $pedidoId: ID!
+    $segundoPedidoId: ID!
+    $pagoId: ID!
+  ) {
+    eliminarPago(id: $pagoId)
+    eliminarPedido(id: $pedidoId)
+    eliminarSegundoPedido: eliminarPedido(id: $segundoPedidoId)
+    eliminarOrden(id: $ordenId)
+    eliminarSegundaOrden: eliminarOrden(id: $segundaOrdenId)
+    eliminarUsuario(id: $usuarioId)
+  }
+}
+
+body:graphql:vars {
+  {
+    "usuarioId": "{{flowUsuarioId}}",
+    "ordenId": "{{flowOrdenId}}",
+    "segundaOrdenId": "{{flowOrden2Id}}",
+    "pedidoId": "{{flowPedidoId}}",
+    "segundoPedidoId": "{{flowPedido2Id}}",
+    "pagoId": "{{flowPagoId}}"
+  }
+}
+
+docs {
+  Se eliminan las dependencias antes que las entidades padre.
+  Devuelve true en cada campo si todo termina sin errores.
+}
