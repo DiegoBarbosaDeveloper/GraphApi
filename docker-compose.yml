@@ -1,0 +1,151 @@
+version: "3.9"
+
+services:
+  consul:
+    image: hashicorp/consul:1.17
+    container_name: mrcatfood-consul
+    ports:
+      - "8500:8500"
+    volumes:
+      - ./consul/config.json:/consul/config/config.json:ro
+    command: "agent -server -ui -bootstrap-expect=1 -client=0.0.0.0 -config-file=/consul/config/config.json"
+    networks:
+      - mrcatfood-network
+    healthcheck:
+      test: ["CMD", "consul", "info"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  usuarios-service:
+    build:
+      context: ./services/usuarios
+      dockerfile: Dockerfile
+    container_name: mrcatfood-usuarios
+    ports:
+      - "3001:3001"
+    environment:
+      - CONSUL_HOST=consul
+      - SERVICE_PORT=3001
+      - DB_PATH=/data/usuarios.db
+    volumes:
+      - usuarios-data:/data
+    networks:
+      - mrcatfood-network
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  ordenes-service:
+    build:
+      context: ./services/ordenes
+      dockerfile: Dockerfile
+    container_name: mrcatfood-ordenes
+    ports:
+      - "3002:3002"
+    environment:
+      - CONSUL_HOST=consul
+      - SERVICE_PORT=3002
+      - DB_PATH=/data/ordenes.db
+    volumes:
+      - ordenes-data:/data
+    networks:
+      - mrcatfood-network
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  pedidos-service:
+    build:
+      context: ./services/pedidos
+      dockerfile: Dockerfile
+    container_name: mrcatfood-pedidos
+    ports:
+      - "3003:3003"
+    environment:
+      - CONSUL_HOST=consul
+      - SERVICE_PORT=3003
+      - DB_PATH=/data/pedidos.db
+    volumes:
+      - pedidos-data:/data
+    networks:
+      - mrcatfood-network
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  pagos-service:
+    build:
+      context: ./services/pagos
+      dockerfile: Dockerfile
+    container_name: mrcatfood-pagos
+    ports:
+      - "3004:3004"
+    environment:
+      - CONSUL_HOST=consul
+      - SERVICE_PORT=3004
+      - DB_PATH=/data/pagos.db
+    volumes:
+      - pagos-data:/data
+    networks:
+      - mrcatfood-network
+    depends_on:
+      consul:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3004/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  cosmo-router:
+    image: ghcr.io/wundergraph/cosmo/router:latest
+    container_name: mrcatfood-cosmo-router
+    ports:
+      - "3000:3000"
+    environment:
+      - CONSUL_HOST=consul
+      - LISTEN_ADDR=0.0.0.0:3000
+    volumes:
+      - ./cosmo/config.yaml:/dist/config.yaml:ro
+    networks:
+      - mrcatfood-network
+    depends_on:
+      usuarios-service:
+        condition: service_healthy
+      ordenes-service:
+        condition: service_healthy
+      pedidos-service:
+        condition: service_healthy
+      pagos-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+networks:
+  mrcatfood-network:
+    driver: bridge
+
+volumes:
+  usuarios-data:
+  ordenes-data:
+  pedidos-data:
+  pagos-data:
